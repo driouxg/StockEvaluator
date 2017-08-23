@@ -1,10 +1,19 @@
+/**
+ * HttpRestClient.cpp
+ *
+ * Uses CppRestSDK to allow HTTP requests to be made to web services
+ * to retrieve JSON data.
+ *
+ * @author Drioux Guidry
+ * @version 08/23/2017
+ */
+
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
 #include <cpprest/json.h>
-#include <sqlite3.h> 
 #include <stdlib.h>
 
 using namespace utility;                    // Common utilities like string conversions
@@ -16,27 +25,28 @@ using namespace concurrency::streams;       // Asynchronous streams
 
 class HttpRestClient {
 
-public:
-	int leaguePoints;
-	int summonerID;
-	std::string sumName;
+private:
 	utility::string_t url;
 
+public:
 	inline HttpRestClient();
 	inline json::value MakeRestRequest();
-	inline int GetSummonerID();
-	inline utility::string_t GetSummonerRank();
 	inline void BuildUrl(utility::string_t firstPartOfUrl, utility::string_t name, utility::string_t key);
 };
 
 
-
+/**
+ * Constructor
+ */
 HttpRestClient::HttpRestClient() {
 
-	// Constructor
 	url = L"";
 }
 
+/**
+ * Performs the HTTP request and returns the JSON data. Catches and prints
+ * any errors, and then returns NULL.
+ */
 json::value HttpRestClient::MakeRestRequest() {
 
 	try
@@ -58,54 +68,13 @@ json::value HttpRestClient::MakeRestRequest() {
 		std::ostringstream ss;
 		ss << e.what() << std::endl;
 	}
-
 	return NULL;
 }
 
-int HttpRestClient::GetSummonerID() {
 
-	json::value& jobj = MakeRestRequest();
-	try
-	{
-		//Print the entire json object
-		//std::wcout << "\nValue: " << jobj << std::endl;
-
-		// Set Global sumName
-		this->sumName = utility::conversions::to_utf8string(jobj.at(U("name")).as_string());
-
-		//Summoner ID (numeric value)
-		int sumID = jobj.at(U("id")).as_integer();
-		summonerID = sumID;
-		return sumID;
-	}
-	catch (const http_exception& e) {
-		std::ostringstream ss;
-		ss << e.what() << std::endl;
-	}
-	return NULL;
-}
-
-utility::string_t HttpRestClient::GetSummonerRank() {
-
-	json::value& jobj = MakeRestRequest();
-
-	try
-	{
-		//Print out entire JSON object
-		//std::wcout << "\nEntire Object: " << jobj.serialize() << std::endl;
-
-		auto league = jobj[0].at(U("tier")).as_string();
-		this->leaguePoints = jobj[0].at(U("leaguePoints")).as_integer();
-
-		return league;
-	}
-	catch (const http_exception& e) {
-		std::ostringstream ss;
-		ss << e.what() << std::endl;
-	}
-	return NULL;
-}
-
-void HttpRestClient::BuildUrl(utility::string_t firstPartOfUrl, utility::string_t name, utility::string_t key) {
-	this->url = firstPartOfUrl + name + key;
+/**
+ * Assembles the private URL to prepare for an HTTP request.
+ */
+void HttpRestClient::BuildUrl(utility::string_t firstPartOfUrl, utility::string_t flags, utility::string_t key) {
+	this->url = firstPartOfUrl + flags + key;
 }
