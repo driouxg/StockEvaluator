@@ -1,6 +1,5 @@
 ﻿// note that the compiled addon is placed under following path
 const example1 = require('./build/Release/Source');
-
 const readline = require('readline');
 
 //const rl = readline.createInterface({
@@ -15,45 +14,25 @@ const readline = require('readline');
 //    rl.close();
 //});
 //
-//console.log(example1.factorial(6));
-
-
-function read_line(cb) {
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-    rl.on('line', function (input) {
-        cb(input)
-        rl.close();
-    });
-}
+var url = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?ticker=FB&qopts.columns=date,open&api_key=yehvpJU2HiME7iWE1aKQ";
 
 try {
-    read_line(function (input) {
-        console.log(example1.factorial(input));
-    });
+    console.log(example1.factorial(5));
+    const fn = example1.MakeRestfulCall(url);
+    console.log(fn(url));
 }
-catch (err) {
+catch(err) {
     console.log(err);
 }
-
-//read_line();
-
-//console.log(example1.factorial(read_line()));
 
 function function1() {
     // stuff you want to happen right away
     console.log('Welcome to My Console,');
 }
 
-function function2() {
-    // all the stuff you want to happen after that pause
-    console.log('Blah blah blah blah extra-blah');
-}
-
 // call the first chunk of code right away
 function1();
 
+
 // call the rest of the code and have it execute after 3 seconds
-setTimeout(function2, 300000);
+setTimeout(function1, 300000);
